@@ -30,3 +30,16 @@ frontend
 npm run server
 
 
+npm i axios
+
+
+http://localhost:3000/api/account
+
+npm install cookie-parser
+
+cookieParser = require('cookie-parser')
+
+
+JWT
+
+npm i jsonwebtoken
