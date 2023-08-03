@@ -1,6 +1,9 @@
 <template>
   <div class="app">
-    <div v-if="state.account.id">안녕하세요? {{ state.account.name }}님!</div>
+    <div v-if="state.account.id">
+      <p>안녕하세요? {{ state.account.name }}님!</p>
+      <button @click="logout()">로그아웃</button>
+    </div>
     <div v-else>
       <label for="loginId">
         <span>아이디</span>
@@ -49,12 +52,22 @@ export default {
         });
     };
 
+    const logout = () => {
+      axios.delete("/api/account").then(() => {
+        alert("로그아웃하였습니다.");
+        state.account.id = null;
+        state.account.name = "";
+      });
+    };
+
+    /*
     axios.get("/api/account").then((res) => {
       //console.log(res.data);
       state.account = res.data;
     });
+    */
 
-    return { state, submit };
+    return { state, submit, logout };
   },
 
   components: {},

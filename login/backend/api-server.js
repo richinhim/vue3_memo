@@ -7,6 +7,9 @@ const port = 3000;
 
 app.use(cookieParser());
 app.use(bodyParser.json());
+
+const jwtKey = "abc1234567";
+
 const members = [
   {
     id: 3,
@@ -23,15 +26,26 @@ const members = [
 ];
 
 app.get("/api/account", (req, res) => {
-  console.log("req.cookies", req.cookies);
+  //  console.log("req.cookies", req.cookies);
 
-  if (req.cookies && req.cookies.account) {
-    const member = JSON.parse(req.cookies.account);
+  if (req.cookies && req.cookies.token) {
+    jwt.verify(req.cookies.token, jwtKey, (err, decoded) => {
+      if (err) {
+        return res.sendStatus(401);
+      }
+
+      res.send(decoded);
+    });
+
+    /*  const member = JSON.parse(req.cookies.account);
     if (member.id) {
       return res.send(member);
-    }
+    } */
+  } else {
+    // res.sendStatus(401);
+    res.sendStatus(401);
   }
-  res.send(null);
+  //res.send(null);
   //res.send(401);
   /*  res.send({
     mid: 3,
@@ -48,17 +62,39 @@ app.post("/api/account", (req, res) => {
     (m) => m.loginId === loginId && m.loginPw === loginPw
   );
 
-  console.log(member);
+  //console.log(member);
+
   if (member) {
     const options = {
       domain: "localhost",
       path: "/",
       httpOnly: true,
     };
-    res.cookie("account", JSON.stringify(member), options);
+
+    const token = jwt.sign(
+      {
+        id: member.id,
+        name: member.name,
+      },
+      jwtKey,
+      {
+        expiresIn: "15m",
+        issuer: "goldmansachs",
+      }
+    );
+
+    res.cookie("token", token, options);
+    //res.cookie("account", JSON.stringify(member), options);
     res.send(member);
   } else {
-    res.send(404);
+    res.sendStatus(404);
+  }
+});
+
+app.delete("/api/account", (req, res) => {
+  if (req.cookies && req.cookies.token) {
+    res.clearCookie("token");
+    res.sendStatus(200);
   }
 });
 

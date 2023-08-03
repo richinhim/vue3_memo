@@ -43,3 +43,11 @@ cookieParser = require('cookie-parser')
 JWT
 
 npm i jsonwebtoken
+
+
+https://jwt.io/
+
+양방향 암호화
+
+redis
+
